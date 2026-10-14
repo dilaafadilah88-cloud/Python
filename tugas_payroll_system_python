@@ -1,0 +1,101 @@
+# ==========================================
+# 1. CLASS KARYAWAN (SUPERCLASS)
+# ==========================================
+class Karyawan:
+    def __init__(self, nama, id_karyawan, gaji_pokok):
+        self.nama = nama                    # Public attribute
+        self.id_karyawan = id_karyawan      # Public attribute
+        self.__gaji_pokok = gaji_pokok      # Private attribute (Encapsulation)
+
+    # Getter untuk gaji_pokok
+    @property
+    def gaji_pokok(self):
+        return self.__gaji_pokok
+
+    # Setter untuk gaji_pokok dengan validasi
+    @gaji_pokok.setter
+    def gaji_pokok(self, nilai_baru):
+        if nilai_baru <= 0:
+            print(f"[PERINGATAN] Gaji pokok untuk {self.nama} tidak boleh kurang dari atau sama dengan 0!")
+        else:
+            self.__gaji_pokok = nilai_baru
+
+    def hitung_gaji_total(self):
+        return self.__gaji_pokok
+
+    def tampilkan_info(self):
+        print(f"ID Karyawan : {self.id_karyawan}")
+        print(f"Nama        : {self.nama}")
+        print(f"Gaji Pokok  : Rp{self.gaji_pokok:,.2f}")
+
+# ==========================================
+# 2. CLASS KARYAWANTETAP (CHILD CLASS)
+# ==========================================
+class KaryawanTetap(Karyawan):
+    def __init__(self, nama, id_karyawan, gaji_pokok, tunjangan):
+        super().__init__(nama, id_karyawan, gaji_pokok) # Memanggil constructor superclass
+        self.tunjangan = tunjangan                      # Public attribute tambahan
+
+    # Overriding method hitung_gaji_total
+    def hitung_gaji_total(self):
+        return self.gaji_pokok + self.tunjangan
+
+    # Overriding method tampilkan_info
+    def tampilkan_info(self):
+        print("=== DATA KARYAWAN TETAP ===")
+        super().tampilkan_info()
+        print(f"Tunjangan   : Rp{self.tunjangan:,.2f}")
+        print(f"Total Gaji  : Rp{self.hitung_gaji_total():,.2f}")
+        print("-" * 30)
+
+# ==========================================
+# 3. CLASS KARYAWANKONTRAK (CHILD CLASS)
+# ==========================================
+class KaryawanKontrak(Karyawan):
+    def __init__(self, nama, id_karyawan, gaji_pokok, jam_lembur, tarif_lembur):
+        super().__init__(nama, id_karyawan, gaji_pokok) # Memanggil constructor superclass
+        self.jam_lembur = jam_lembur                    # Public attribute tambahan
+        self.tarif_lembur = tarif_lembur                # Public attribute tambahan
+
+    # Overriding method hitung_gaji_total
+    def hitung_gaji_total(self):
+        return self.gaji_pokok + (self.jam_lembur * self.tarif_lembur)
+
+    # Overriding method tampilkan_info
+    def tampilkan_info(self):
+        print("=== DATA KARYAWAN KONTRAK ===")
+        super().tampilkan_info()
+        print(f"Jam Lembur  : {self.jam_lembur} jam")
+        print(f"Tarif Lembur: Rp{self.tarif_lembur:,.2f}/jam")
+        print(f"Total Gaji  : Rp{self.hitung_gaji_total():,.2f}")
+        print("-" * 30)
+
+# ==========================================
+# KETENTUAN PENGUJIAN KODE (MAIN PROGRAM)
+# ==========================================
+if __name__ == "__main__":
+    print("--- LANGKAH 1 & 2: MEMBUAT OBJEK & DIMASUKKAN KE LIST ---")
+    # 1. Membuat objek karyawan tetap dan kontrak
+    karyawan1 = KaryawanTetap("lala duyung", "KT-001", 7000000, 2500000)
+    karyawan2 = KaryawanKontrak("aedil", "KK-002", 5000000, 10, 150000)
+
+    # 2. Menyimpan objek ke dalam list bernama daftar_karyawan
+    daftar_karyawan = [karyawan1, karyawan2]
+    print("Objek berhasil dibuat dan disimpan di 'daftar_karyawan'.\n")
+
+    print("--- LANGKAH 3: DEMONSTRASI POLYMORPHISM (LOOPING INFO) ---")
+    # 3. Melakukan looping untuk memanggil method tampilkan_info() masing-masing objek
+    for kry in daftar_karyawan:
+        kry.tampilkan_info()
+
+    print("--- LANGKAH 4: DEMONSTRASI ENCAPSULATION (SETTER VALIDASI) ---")
+    # 4a. Mengubah gaji pokok dengan nilai TIDAK VALID (<= 0) untuk memicu peringatan
+    print("[Mencoba mengubah gaji lala dengan nilai -700000]")
+    karyawan1.gaji_pokok = -700000 
+    print()
+
+    # 4b. Mengubah gaji pokok dengan nilai VALID, lalu menampilkan ulang hasilnya
+    print("[Mencoba mengubah gaji lala dengan nilai valid Rp7,500,000]")
+    karyawan1.gaji_pokok = 7500000
+    print("\n=== DATA TERBARU LALA SETELAH GAJI POKOK DIUBAH ===")
+    karyawan1.tampilkan_info()
